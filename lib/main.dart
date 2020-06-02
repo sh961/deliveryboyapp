@@ -11,11 +11,16 @@ void main() {
 class MyApp extends StatelessWidget{
   Widget build(BuildContext context){
     return MaterialApp(
+    
       
-      home: BaseApp(),
+      home: BaseApp(),debugShowCheckedModeBanner: false,
+      
       routes: <String, WidgetBuilder> {
-        "/QuickOrders" :(context)=>QuickOrders()
+        "/QuickOrders" :(context)=>QuickOrders(),
+         "/QuickMsg" :(context)=>QuickMsg(),
+         "/ScheduleMsg" :(context)=>ScheduleMsg(),
       }
+
      );   
     
   }
@@ -86,7 +91,9 @@ class QuickOrders extends StatelessWidget{
       color: Colors.white,
       textColor: Colors.red,
       padding: EdgeInsets.all(8.0),
-      onPressed: () {},
+      onPressed: () {
+         Navigator.pushNamed(context, "/QuickMsg");
+      },
       child: Text(
         "Quick Order".toUpperCase(),
         style: TextStyle(
@@ -99,7 +106,9 @@ class QuickOrders extends StatelessWidget{
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18.0),
         side: BorderSide(color: Colors.red)),
-      onPressed: () {},
+      onPressed: () {
+         Navigator.pushNamed(context, "/ScheduleMsg");
+      },
       color: Colors.red,
       textColor: Colors.white,
       child: Text("Schedule Delivery".toUpperCase(),
@@ -137,5 +146,27 @@ class QuickOrders extends StatelessWidget{
       ),
     );
   }
+}
+class QuickMsg extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+       backgroundColor:Colors.teal[200],
+       appBar: AppBar(title:Text('Quick message')),
+       
+    );
+  }
+
+}
+class ScheduleMsg extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+       backgroundColor:Colors.teal[200],
+       appBar: AppBar(title:Text('schedule msg')),
+
+    );
+  }
+
 }
 
