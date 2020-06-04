@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'ChatHelper.dart';
-import 'ChatItemModel.dart';
-import 'package:dash_chat/dash_chat.dart';
+
+
+
+import 'package:a/message_model.dart';
+import 'package:a/user_model.dart';
+
+import 'category_selector.dart';
+import 'recent_chats.dart';
+
 
 
 
@@ -24,8 +30,9 @@ class MyApp extends StatelessWidget{
       routes: <String, WidgetBuilder> {
         "/QuickOrders" :(context)=>QuickOrders(),
          "/QuickMsg" :(context)=>QuickMsg(),
-         "/ScheduleMsg" :(context)=>ScheduleMsg(),
-         "/MsgView" :(context)=>MsgView(),
+        
+         
+        
       }
 
      );   
@@ -42,6 +49,7 @@ class BaseApp extends StatelessWidget {
             
         
       children: <Widget>[
+               
         
          const SizedBox(height: 150),
         RaisedButton(
@@ -74,8 +82,9 @@ class BaseApp extends StatelessWidget {
                 },
               ),
             ),
+           
       
-      ],
+      ]
     ),
           ),
         
@@ -114,7 +123,7 @@ class QuickOrders extends StatelessWidget{
         borderRadius: BorderRadius.circular(18.0),
         side: BorderSide(color: Colors.red)),
       onPressed: () {
-         Navigator.pushNamed(context, "/ScheduleMsg");
+         Navigator.pushNamed(context, "/QuickMsg");
       },
       color: Colors.red,
       textColor: Colors.white,
@@ -149,6 +158,8 @@ class QuickOrders extends StatelessWidget{
                 },
               ),
             ),
+             const SizedBox(height: 50),
+       
         ],
       ),
     );
@@ -156,282 +167,60 @@ class QuickOrders extends StatelessWidget{
 }
 class QuickMsg extends StatefulWidget {
   @override
-  _QuickMsgState createState() => new _QuickMsgState();
+  _QuickMsgState createState() => _QuickMsgState();
 }
 
-
-class _QuickMsgState extends State<QuickMsg>
-    with SingleTickerProviderStateMixin {
-  Color whatsAppGreen = Color.fromRGBO(18, 140, 126, 1.0);
-  Color whatsAppGreenLight = Color.fromRGBO(37, 211, 102, 1.0);
-
-  TabController tabController;
-  var fabIcon = Icons.message;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    tabController = TabController(vsync: this, length: 1)
-      ..addListener(() {
-        setState(() {
-          switch (tabController.index) {
-            case 0:
-              break;
-            case 1:
-              fabIcon = Icons.message;
-              break;
-           
-          }
-        });
-      });
-  }
-
+class _QuickMsgState extends State<QuickMsg> {
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          "quickmsg",
-          style: TextStyle(
-              color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.w600),
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.menu),
+          iconSize: 30.0,
+          color: Colors.white,
+          onPressed: () {},
         ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Icon(Icons.search),
+        title: Text(
+          'Chats',
+          style: TextStyle(
+            fontSize: 28.0,
+            fontWeight: FontWeight.bold,
           ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.more_vert),
+        ),
+        elevation: 0.0,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            iconSize: 30.0,
+            color: Colors.white,
+            onPressed: () {},
           ),
         ],
-        backgroundColor: whatsAppGreen,
-        bottom: TabBar(
-          tabs: [
-            
-            Tab(
-              child: Text("CHATS"),
-            ),
-            
-          ],
-          indicatorColor: Colors.white,
-          controller: tabController,
-        ),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: [
-         
-          ListView.builder(
-            itemBuilder: (context, position) {
-             
-              ChatItemModel chatItem = ChatHelper.getChatItem(position);
-             
-              return Column(
+      body: Column(
+        children: <Widget>[
+          CategorySelector(),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).accentColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(30.0),
+                  topRight: Radius.circular(30.0),
+                ),
+              ),
+              child: Column(
                 children: <Widget>[
-                   
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.account_circle,
-                          size: 64.0,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      chatItem.name,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20.0),
-                                    ),
-                                    Text(
-                                      chatItem.messageDate,
-                                      style: TextStyle(color: Colors.black45),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: Text(
-                                    chatItem.mostRecentMessage,
-                                    style: TextStyle(
-                                        color: Colors.black45, fontSize: 16.0),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  
-                  Divider(),
+               
+                  RecentChats(),
                 ],
-              );
-            },
-            itemCount: ChatHelper.itemCount,
-            
-            
+              ),
+            ),
           ),
         ],
       ),
     );
   }
-}
-class ScheduleMsg extends StatefulWidget {
-  @override
-  _ScheduleMsgState createState() => new _ScheduleMsgState();
-}
-
-
-class _ScheduleMsgState extends State<ScheduleMsg>
-    with SingleTickerProviderStateMixin {
-  Color whatsAppGreen = Color.fromRGBO(18, 140, 126, 1.0);
-  Color whatsAppGreenLight = Color.fromRGBO(37, 211, 102, 1.0);
-
-  TabController tabController;
-  var fabIcon = Icons.message;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    tabController = TabController(vsync: this, length: 1)
-      ..addListener(() {
-        setState(() {
-          switch (tabController.index) {
-            case 0:
-              break;
-            case 1:
-              fabIcon = Icons.message;
-              break;
-           
-          }
-        });
-      });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text(
-          "schedulemsg",
-          style: TextStyle(
-              color: Colors.white, fontSize: 22.0, fontWeight: FontWeight.w600),
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 20.0),
-            child: Icon(Icons.search),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Icon(Icons.more_vert),
-          ),
-        ],
-        backgroundColor: whatsAppGreen,
-        bottom: TabBar(
-          tabs: [
-            
-            Tab(
-              child: Text("CHATS"),
-              
-            ),
-            
-            
-          ],
-          indicatorColor: Colors.white,
-          controller: tabController,
-        ),
-      ),
-      body: TabBarView(
-        controller: tabController,
-        children: [
-        
-          ListView.builder(
-            itemBuilder: (context, position) {
-              ChatItemModel chatItem = ChatHelper.getChatItem(position);
-
-              return Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: <Widget>[
-                        Icon(
-                          Icons.account_circle,
-                          size: 64.0,
-                        ),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Text(
-                                      chatItem.name,
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 20.0),
-                                    ),
-                                    Text(
-                                      chatItem.messageDate,
-                                      style: TextStyle(color: Colors.black45),
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 2.0),
-                                  child: Text(
-                                    chatItem.mostRecentMessage,
-                                    style: TextStyle(
-                                        color: Colors.black45, fontSize: 16.0),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  Divider(),
-                ],
-              );
-            },
-            itemCount: ChatHelper.itemCount,
-          ),
-        ],
-      ),
-    );
-  }
-}
-class MsgView extends StatelessWidget{
- @override
- Widget build(BuildContext context){
-   return Scaffold(
-     backgroundColor:Colors.teal[300],
-    
-
-   );
-}
 }
